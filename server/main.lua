@@ -1,6 +1,8 @@
 -- LcCore Server - Entry Point
 
-LcCore.Players = {} -- [source] = Player
+LcCore.Players = {}          -- [source] = Player
+LcCore._charIndex = {}       -- [charId] = source  (lookup O(1))
+LcCore._discordIndex = {}    -- [discord] = source  (lookup O(1))
 
 -------------------------------------------------
 -- Init
@@ -9,7 +11,6 @@ AddEventHandler('onResourceStart', function(resourceName)
     if GetCurrentResourceName() ~= resourceName then return end
     print('[LcCore] ^2Server initialized^0')
 
-    -- On resource restart: re-init all connected players
     for _, playerId in ipairs(GetPlayers()) do
         LcCore.InitPlayer(tonumber(playerId))
     end
@@ -23,10 +24,35 @@ end)
 function LcCore.GetDiscordId(source)
     for _, id in ipairs(GetPlayerIdentifiers(source)) do
         if string.find(id, 'discord:') then
-            return string.gsub(id, 'discord:', '')
+            return (string.gsub(id, 'discord:', ''))
         end
     end
     return nil
+end
+
+-------------------------------------------------
+-- Index management (O(1) lookups)
+-------------------------------------------------
+
+local function indexPlayer(source, player)
+    local discord <const> = player.getDiscord()
+    LcCore._discordIndex[discord] = source
+end
+
+local function indexChar(source, charId)
+    LcCore._charIndex[charId] = source
+end
+
+local function cleanupIndex(source)
+    local player = LcCore.Players[source]
+    if not player then return end
+
+    LcCore._discordIndex[player.getDiscord()] = nil
+
+    local charId = player.getCharId()
+    if charId > 0 then
+        LcCore._charIndex[charId] = nil
+    end
 end
 
 -------------------------------------------------
@@ -40,13 +66,12 @@ function LcCore.InitPlayer(source)
         return
     end
 
-    -- Save existing player data if resource restart
     if LcCore.Players[source] then
         LcCore.SavePlayer(source)
+        cleanupIndex(source)
         LcCore.Players[source] = nil
     end
 
-    -- Load characters from DB
     local charRows = MySQL.query.await('SELECT * FROM lc_characters WHERE discord = ?', { discord })
     local characters = {}
 
@@ -72,7 +97,7 @@ function LcCore.InitPlayer(source)
             skin = type(row.skin) == 'string' and json.decode(row.skin) or row.skin
         end
 
-        local char = LcCore.CreateCharacter({
+        local char <const> = LcCore.CreateCharacter({
             charId    = row.id,
             discord   = discord,
             group     = row.group,
@@ -92,19 +117,18 @@ function LcCore.InitPlayer(source)
         characters[char.charId] = char
     end
 
-    -- Create player object
-    local player = LcCore.CreatePlayer(source, discord, characters)
+    local player <const> = LcCore.CreatePlayer(source, discord, characters)
     LcCore.Players[source] = player
+    indexPlayer(source, player)
 
-    local charCount = player.getCharCount()
+    local charCount <const> = player.getCharCount()
 
     if charCount == 0 then
-        -- No characters -> creation screen
         TriggerClientEvent('lc:createCharacter', source)
     elseif charCount == 1 then
-        -- Single char -> auto select & spawn direct
         local _, firstChar = next(characters)
         player.setActiveChar(firstChar.charId)
+        indexChar(source, firstChar.charId)
         TriggerClientEvent('lc:spawn', source, {
             charId    = firstChar.charId,
             firstname = firstChar.firstname,
@@ -114,7 +138,6 @@ function LcCore.InitPlayer(source)
             isDead    = firstChar.isDead,
         })
     else
-        -- Multiple chars -> selection screen
         local charList = {}
         for charId, char in pairs(characters) do
             charList[#charList + 1] = {
@@ -136,7 +159,7 @@ end
 -- Player connecting (ban check)
 -------------------------------------------------
 AddEventHandler('playerConnecting', function(_, _, deferrals)
-    local source = source
+    local source <const> = source
     deferrals.defer()
     Wait(0)
     deferrals.update('Chargement...')
@@ -160,7 +183,7 @@ end)
 -- Player fully joined -> init
 -------------------------------------------------
 RegisterNetEvent('lc:playerJoined', function()
-    local source = source
+    local source <const> = source
     LcCore.InitPlayer(source)
 end)
 
@@ -168,13 +191,14 @@ end)
 -- Player selects a character
 -------------------------------------------------
 RegisterNetEvent('lc:charSelected', function(charId)
-    local source = source
+    local source <const> = source
     local player = LcCore.GetPlayer(source)
     if not player then return end
 
     if not player.setActiveChar(charId) then return end
+    indexChar(source, charId)
 
-    local char = player.getActiveChar()
+    local char <const> = player.getActiveChar()
     TriggerClientEvent('lc:spawn', source, {
         charId    = char.charId,
         firstname = char.firstname,
@@ -189,20 +213,20 @@ end)
 -- Player creates a character
 -------------------------------------------------
 RegisterNetEvent('lc:charCreate', function(data)
-    local source = source
+    local source <const> = source
     local player = LcCore.GetPlayer(source)
     if not player then return end
 
     if player.getCharCount() >= Config.MaxCharacters then
-        TriggerClientEvent('lc:notify', source, 'Nombre max de personnages atteint', 'error')
+        TriggerClientEvent('lc:notify', source, 'Tip', 'Nombre max de personnages atteint', 3000)
         return
     end
 
-    local discord = player.getDiscord()
-    local defaultJob = json.encode({ name = Config.DefaultJob, grade = Config.DefaultJobGrade, label = Config.DefaultJobLabel })
-    local defaultCoords = json.encode({ x = Config.DefaultSpawn.x, y = Config.DefaultSpawn.y, z = Config.DefaultSpawn.z })
+    local discord <const> = player.getDiscord()
+    local defaultJob <const> = json.encode({ name = Config.DefaultJob, grade = Config.DefaultJobGrade, label = Config.DefaultJobLabel })
+    local defaultCoords <const> = json.encode({ x = Config.DefaultSpawn.x, y = Config.DefaultSpawn.y, z = Config.DefaultSpawn.z })
 
-    local charId = MySQL.insert.await(
+    local charId <const> = MySQL.insert.await(
         'INSERT INTO lc_characters (discord, firstname, lastname, job, gang, money, gold, coords, inventory, skin, slots, xp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         {
             discord,
@@ -220,7 +244,7 @@ RegisterNetEvent('lc:charCreate', function(data)
         }
     )
 
-    local char = LcCore.CreateCharacter({
+    local char <const> = LcCore.CreateCharacter({
         charId    = charId,
         discord   = discord,
         firstname = data.firstname,
@@ -229,6 +253,7 @@ RegisterNetEvent('lc:charCreate', function(data)
 
     player.addCharacter(char)
     player.setActiveChar(charId)
+    indexChar(source, charId)
 
     TriggerClientEvent('lc:spawn', source, {
         charId    = charId,
@@ -244,44 +269,50 @@ end)
 -- Player disconnect -> save & cleanup
 -------------------------------------------------
 AddEventHandler('playerDropped', function()
-    local source = source
+    local source <const> = source
     LcCore.SavePlayer(source)
+    cleanupIndex(source)
     LcCore.Players[source] = nil
 end)
 
 -------------------------------------------------
--- Getters
+-- Getters (tous O(1), zero boucle)
 -------------------------------------------------
 
+--- Get player by source
 ---@param source number
 ---@return table?
 function LcCore.GetPlayer(source)
     return LcCore.Players[source]
 end
 
+--- Get all players
 ---@return table
 function LcCore.GetPlayers()
     return LcCore.Players
 end
 
----@param discord string
----@return table?
-function LcCore.GetPlayerByDiscord(discord)
-    for _, player in pairs(LcCore.Players) do
-        if player.getDiscord() == discord then
-            return player
-        end
-    end
-    return nil
-end
-
+--- Get player by charId (O(1) via index)
 ---@param charId number
 ---@return table?
 function LcCore.GetPlayerByCharId(charId)
-    for _, player in pairs(LcCore.Players) do
-        if player.getCharId() == charId then
-            return player
-        end
-    end
+    local source = LcCore._charIndex[charId]
+    if source then return LcCore.Players[source] end
     return nil
+end
+
+--- Get player by Discord ID (O(1) via index)
+---@param discord string
+---@return table?
+function LcCore.GetPlayerByDiscord(discord)
+    local source = LcCore._discordIndex[discord]
+    if source then return LcCore.Players[source] end
+    return nil
+end
+
+--- Get source from charId (O(1))
+---@param charId number
+---@return number?
+function LcCore.GetSourceByCharId(charId)
+    return LcCore._charIndex[charId]
 end

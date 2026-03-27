@@ -2,22 +2,24 @@
 
 LcCore.Commands = {}
 
---- Register a command with permission check
 ---@param name string
----@param group string|table -- group(s) allowed
+---@param group string|table
 ---@param cb function
----@param suggestion table? -- { help = '', params = {} }
+---@param suggestion table?
 function LcCore.Commands.Register(name, group, cb, suggestion)
     RegisterCommand(name, function(source, args, rawCommand)
         local player = LcCore.GetPlayer(source)
         if not player then return end
 
+        local playerGroup = player.getGroup()
         local allowed = false
-        local playerGroup = player.GetGroup()
 
         if type(group) == 'table' then
             for _, g in ipairs(group) do
-                if playerGroup == g then allowed = true break end
+                if playerGroup == g then
+                    allowed = true
+                    break
+                end
             end
         else
             allowed = (playerGroup == group) or (group == LcCore.Groups.USER)

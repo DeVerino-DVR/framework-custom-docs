@@ -1,6 +1,5 @@
 -- LcCore Client Module - Utilities
 
---- Load a model with timeout
 ---@param model string|number
 ---@return boolean
 function LcCore.LoadModel(model)
@@ -14,7 +13,6 @@ function LcCore.LoadModel(model)
     return HasModelLoaded(hash)
 end
 
---- Load an animation dictionary
 ---@param dict string
 ---@return boolean
 function LcCore.LoadAnimDict(dict)
@@ -25,11 +23,4 @@ function LcCore.LoadAnimDict(dict)
         timeout = timeout + 10
     end
     return HasAnimDictLoaded(dict)
-end
-
---- Draw 3D text at position
----@param coords vector3
----@param text string
-function LcCore.Draw3DText(coords, text)
-    -- TODO: draw text logic
 end
