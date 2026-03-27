@@ -1,0 +1,11 @@
+-- LcCore Server Module - Inventory
+-- ESX-style usage directly on the player:
+--   local player = LcCore.GetPlayer(source)
+--   player.addItem('bread', 5)
+--   player.removeItem('bread', 2)
+--   player.getItemCount('bread')
+--   player.getInventory()
+--   player.getSlots()
+--   player.addSlots(10)
+--
+-- This module only exists for global inventory events / logging.
