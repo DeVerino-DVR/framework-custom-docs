@@ -8,29 +8,29 @@ Ecouter avec `AddEventHandler()`.
 
 | Event | Params | Declencheur |
 |---|---|---|
-| `lc:jobChanged` | charId, newJob, oldJob | `player.setJob()` |
-| `lc:gangChanged` | charId, gang | `player.setGang()` |
-| `lc:groupChanged` | charId, group | `player.setGroup()` |
-| `lc:moneyChanged` | charId, type, amount, action | `player.addMoney/removeMoney/addGold/removeGold` |
-| `lc:itemChanged` | charId, item, count, action | `player.addItem/removeItem` |
-| `lc:taxChanged` | countyId, taxRate | `LcCore.Economy.SetTax()` |
-| `lc:mayorChanged` | countyId, charId | `LcCore.Economy.SetMayor()` |
+| `dvr:jobChanged` | charId, newJob, oldJob | `player.setJob()` |
+| `dvr:gangChanged` | charId, gang | `player.setGang()` |
+| `dvr:groupChanged` | charId, group | `player.setGroup()` |
+| `dvr:moneyChanged` | charId, type, amount, action | `player.addMoney/removeMoney/addGold/removeGold` |
+| `dvr:itemChanged` | charId, item, count, action | `player.addItem/removeItem` |
+| `dvr:taxChanged` | countyId, taxRate | `DVRCore.Economy.SetTax()` |
+| `dvr:mayorChanged` | countyId, charId | `DVRCore.Economy.SetMayor()` |
 
 ### Exemples
 
 ```lua
 -- Reagir a un changement de job
-AddEventHandler('lc:jobChanged', function(charId, newJob, oldJob)
+AddEventHandler('dvr:jobChanged', function(charId, newJob, oldJob)
     print('CharId', charId, 'passe de', oldJob.name, 'a', newJob.name)
 end)
 
 -- Logger les transactions
-AddEventHandler('lc:moneyChanged', function(charId, type, amount, action)
+AddEventHandler('dvr:moneyChanged', function(charId, type, amount, action)
     print('CharId', charId, action, amount, type)
 end)
 
 -- Reagir a un changement de taxe
-AddEventHandler('lc:taxChanged', function(countyId, taxRate)
+AddEventHandler('dvr:taxChanged', function(countyId, taxRate)
     print('Taxe de', countyId, 'changee a', taxRate .. '%')
 end)
 ```
@@ -39,16 +39,16 @@ end)
 
 | Event | Params | Description |
 |---|---|---|
-| `lc:playerSpawned` | charId, firstname, lastname | Joueur spawn apres selection |
-| `lc:spawn` | data (table) | Trigger le spawn client |
-| `lc:selectCharacter` | charList (table) | Ouvre la selection de personnage |
-| `lc:createCharacter` | - | Ouvre la creation de personnage |
-| `lc:notify` | type, ... | Notification native |
+| `dvr:playerSpawned` | charId, firstname, lastname | Joueur spawn apres selection |
+| `dvr:spawn` | data (table) | Trigger le spawn client |
+| `dvr:selectCharacter` | charList (table) | Ouvre la selection de personnage |
+| `dvr:createCharacter` | - | Ouvre la creation de personnage |
+| `dvr:notify` | type, ... | Notification native |
 
 ### Exemple
 
 ```lua
-AddEventHandler('lc:playerSpawned', function(charId, firstname, lastname)
+AddEventHandler('dvr:playerSpawned', function(charId, firstname, lastname)
     print('Spawn en tant que', firstname, lastname, '(charId:', charId, ')')
 end)
 ```
@@ -58,15 +58,15 @@ end)
 ```
 Joueur se connecte
     -> playerConnecting (verif Discord + ban)
-    -> lc:playerJoined (charge les personnages)
-    -> 0 perso: lc:createCharacter
-    -> 1 perso: lc:spawn (direct)
-    -> 2+ persos: lc:selectCharacter -> lc:charSelected -> lc:spawn
-    -> lc:playerSpawned
+    -> dvr:playerJoined (charge les personnages)
+    -> 0 perso: dvr:createCharacter
+    -> 1 perso: dvr:spawn (direct)
+    -> 2+ persos: dvr:selectCharacter -> dvr:charSelected -> dvr:spawn
+    -> dvr:playerSpawned
 
 Resource restart
     -> save tous les joueurs
-    -> re-trigger lc:playerJoined
+    -> re-trigger dvr:playerJoined
     -> meme flow (pas besoin de reco)
 
 Joueur drop
@@ -84,7 +84,7 @@ Joueur drop
 Un script externe ne devrait **jamais** manipuler la source directement. Toujours passer par le charId :
 
 ```lua
-local LC = exports['LcCore']:GetCore()
+local LC = exports['DVRCore']:GetCore()
 
 -- Trouver un joueur par son charId
 local player = LC.GetPlayerByCharId(42)

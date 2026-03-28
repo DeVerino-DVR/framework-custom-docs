@@ -1,6 +1,6 @@
 # DVRCore Framework
 
-Framework custom pour LastCountry (RedM).
+Framework custom RedM.
 
 ## Principes
 
@@ -74,4 +74,6 @@ DVRCore/
 - [Character](./character.md) - Flow de creation de personnage
 - [Economie & Taxes](./economy.md) - Systeme de comtes
 - [Base de donnees](./database.md) - Schema SQL
+- [KeyMapper](./keymapper.md) - Gestionnaire de touches
+- [Inventaire](./inventory.md) - Inventaire, items, money
 - [Evenements](./events.md) - Liste des events

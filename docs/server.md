@@ -3,7 +3,7 @@
 ## Recuperer le Core
 
 ```lua
-local LC = exports['LcCore']:GetCore()
+local LC = exports['DVRCore']:GetCore()
 ```
 
 ## Player (style ESX)
@@ -153,13 +153,13 @@ LC.SaveAll()          -- sauvegarde tout le monde
 
 Auto-save toutes les 5 minutes (configurable).
 
-## Callbacks (ox_lib style)
+## Callbacks
 
 ### Register
 
 ```lua
-LcCore.Callback.Register('lc:getPlayerData', function(source)
-    local player = LcCore.GetPlayer(source)
+DVRCore.Callback.Register('dvr:getPlayerData', function(source)
+    local player = DVRCore.GetPlayer(source)
     return {
         name  = player.getName(),
         money = player.getMoney(),
@@ -168,4 +168,4 @@ LcCore.Callback.Register('lc:getPlayerData', function(source)
 end)
 ```
 
-Le client appelle avec `LcCore.Callback.Await()` et recoit le return directement.
+Le client appelle avec `DVRCore.Callback.Await()` et recoit le return directement.

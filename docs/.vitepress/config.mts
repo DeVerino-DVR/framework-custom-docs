@@ -1,9 +1,9 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: 'LcCore',
-  description: 'Documentation du framework LcCore - LastCountry RedM',
-  base: '/LcCore-docs/',
+  title: 'DVRCore',
+  description: 'Documentation du framework DVRCore',
+  base: '/framework-custom-docs/',
 
   themeConfig: {
     nav: [
@@ -11,7 +11,6 @@ export default defineConfig({
       { text: 'Server', link: '/server' },
       { text: 'Client', link: '/client' },
       { text: 'Menu', link: '/menu' },
-      { text: 'Skin', link: '/skin' },
     ],
 
     sidebar: [
@@ -28,6 +27,7 @@ export default defineConfig({
           { text: 'Player & Core', link: '/server' },
           { text: 'Economie & Taxes', link: '/economy' },
           { text: 'Evenements', link: '/events' },
+          { text: 'Inventaire', link: '/inventory' },
         ]
       },
       {
@@ -35,21 +35,18 @@ export default defineConfig({
         items: [
           { text: 'Callbacks, State, KVP', link: '/client' },
           { text: 'Menu', link: '/menu' },
+          { text: 'Inventaire', link: '/inventory' },
+          { text: 'Skin & Personnalisation', link: '/skin' },
           { text: 'Camera', link: '/camera' },
           { text: 'Prompts', link: '/prompts' },
-        ]
-      },
-      {
-        text: 'Personnage',
-        items: [
-          { text: 'Creation de personnage', link: '/character' },
-          { text: 'Skin & Editeur', link: '/skin' },
+          { text: 'Personnage', link: '/character' },
+          { text: 'KeyMapper', link: '/keymapper' },
         ]
       },
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/DeVerino-DVR/LcCore-docs' }
+      { icon: 'github', link: 'https://github.com/DeVerino-DVR/framework-custom' }
     ],
 
     search: {
@@ -57,7 +54,7 @@ export default defineConfig({
     },
 
     footer: {
-      message: 'LastCountry Framework',
+      message: 'DVRCore Framework',
     }
   }
 })

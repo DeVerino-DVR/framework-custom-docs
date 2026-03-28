@@ -3,20 +3,20 @@
 ## Recuperer le Core
 
 ```lua
-local LC = exports['LcCore']:GetCore()
+local LC = exports['DVRCore']:GetCore()
 ```
 
-## Callbacks (ox_lib style)
+## Callbacks
 
 Toujours en `Await` avec return direct, jamais de `cb()`.
 
 ```lua
 -- Appel synchrone
-local data = LcCore.Callback.Await('lc:getPlayerData')
+local data = DVRCore.Callback.Await('dvr:getPlayerData')
 print(data.name, data.money)
 
 -- Avec arguments
-local price, tax = LcCore.Callback.Await('lc:getPrice', 10.0, 'new_hanover')
+local price, tax = DVRCore.Callback.Await('dvr:getPrice', 10.0, 'new_hanover')
 ```
 
 ## State Bags
@@ -89,29 +89,29 @@ Notifications natives de Red Dead, pas de NUI.
 ### Depuis le client
 
 ```lua
-LcCore.Notify.Tip('Message simple', 3000)
-LcCore.Notify.Right('Tip a droite', 3000)
-LcCore.Notify.Center('Centre ecran', 3000, 'COLOR_PURE_WHITE')
-LcCore.Notify.Bottom('Objectif', 3000)
-LcCore.Notify.BottomRight('Bas droite', 3000)
-LcCore.Notify.Top('Message', 'Valentine', 3000)
-LcCore.Notify.SimpleTop('Titre', 'Sous-titre', 3000)
-LcCore.Notify.Left('Titre', 'Sous-titre', 'generic_textures', 'tick', 3000, 'COLOR_WHITE')
-LcCore.Notify.Advanced('Texte', 'generic_textures', 'tick', 'COLOR_WHITE', 3000)
-LcCore.Notify.LeftRank('Titre', 'Sous-titre', 'generic_textures', 'tick', 5000, 'COLOR_WHITE')
-LcCore.Notify.Fail('Titre', 'Sous-titre', 3000)
-LcCore.Notify.Dead('Titre', 'audioRef', 'audioName', 3000)
-LcCore.Notify.Update('Titre', 'Message', 3000)
-LcCore.Notify.Warning('Titre', 'Message', 'audioRef', 'audioName', 3000)
+DVRCore.Notify.Tip('Message simple', 3000)
+DVRCore.Notify.Right('Tip a droite', 3000)
+DVRCore.Notify.Center('Centre ecran', 3000, 'COLOR_PURE_WHITE')
+DVRCore.Notify.Bottom('Objectif', 3000)
+DVRCore.Notify.BottomRight('Bas droite', 3000)
+DVRCore.Notify.Top('Message', 'Valentine', 3000)
+DVRCore.Notify.SimpleTop('Titre', 'Sous-titre', 3000)
+DVRCore.Notify.Left('Titre', 'Sous-titre', 'generic_textures', 'tick', 3000, 'COLOR_WHITE')
+DVRCore.Notify.Advanced('Texte', 'generic_textures', 'tick', 'COLOR_WHITE', 3000)
+DVRCore.Notify.LeftRank('Titre', 'Sous-titre', 'generic_textures', 'tick', 5000, 'COLOR_WHITE')
+DVRCore.Notify.Fail('Titre', 'Sous-titre', 3000)
+DVRCore.Notify.Dead('Titre', 'audioRef', 'audioName', 3000)
+DVRCore.Notify.Update('Titre', 'Message', 3000)
+DVRCore.Notify.Warning('Titre', 'Message', 'audioRef', 'audioName', 3000)
 ```
 
 ### Depuis le server
 
 ```lua
 -- Envoie un type de notification a un joueur
-TriggerClientEvent('lc:notify', source, 'Tip', 'Message ici', 3000)
-TriggerClientEvent('lc:notify', source, 'Center', 'Bienvenue!', 5000)
-TriggerClientEvent('lc:notify', source, 'Left', 'Titre', 'Sous-titre', 'generic_textures', 'tick', 3000)
+TriggerClientEvent('dvr:notify', source, 'Tip', 'Message ici', 3000)
+TriggerClientEvent('dvr:notify', source, 'Center', 'Bienvenue!', 5000)
+TriggerClientEvent('dvr:notify', source, 'Left', 'Titre', 'Sous-titre', 'generic_textures', 'tick', 3000)
 ```
 
 ### Types de notifications
