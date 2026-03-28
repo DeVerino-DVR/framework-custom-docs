@@ -1,4 +1,4 @@
-# LcCore Framework
+# DVRCore Framework
 
 Framework custom pour LastCountry (RedM).
 
@@ -8,7 +8,7 @@ Framework custom pour LastCountry (RedM).
 - **Style ESX** : `player.addMoney()`, `player.addItem()`, `player.setJob()`
 - **State Bags** : sync temps reel server -> client
 - **KVP** : preferences locales sans reseau
-- **ox_lib style callbacks** : `LcCore.Callback.Await()` avec return direct
+- **Callbacks return-based** : `DVRCore.Callback.Await()` avec return direct
 - **Notifications natives** RedM (pas de NUI pour les notifs)
 - **Optimise 800+ joueurs** : zero boucle, tout en cache table
 - **Multi-personnage** : 1 perso = spawn direct, 2+ = selection
@@ -16,45 +16,62 @@ Framework custom pour LastCountry (RedM).
 ## Structure
 
 ```
-LcCore/
+DVRCore/
 ├── fxmanifest.lua
 ├── config/config.lua
 ├── shared/shared.lua
-├── sql/database.sql
 ├── client/
-│   ├── dataview.lua          -- Buffer binaire pour natives RDR3
-│   ├── callbacks.lua         -- Callback system (ox_lib style)
-│   ├── spawn.lua             -- Spawn & selection personnage
-│   ├── api.lua               -- Exports client
-│   ├── main.lua              -- Entry point
+│   ├── dataview.lua              -- Buffer binaire pour natives RDR3
+│   ├── callbacks.lua             -- Callback system (return-based)
+│   ├── spawn.lua                 -- Spawn, animscene intro, creation de perso
+│   ├── api.lua                   -- Exports client
+│   ├── main.lua                  -- Entry point
 │   └── modules/
-│       ├── notifications.lua -- Notifications natives RDR3
-│       ├── hud.lua           -- HUD
-│       ├── state.lua         -- State Bags (lecture)
-│       ├── kvp.lua           -- KVP (stockage local)
-│       └── utils.lua         -- Utilitaires
+│       ├── core/
+│       │   ├── camera.lua        -- API Camera (Create, Interp, PostFX)
+│       │   ├── prompts.lua       -- API Prompts natifs RDR3
+│       │   ├── state.lua         -- State Bags (lecture)
+│       │   ├── kvp.lua           -- KVP (stockage local)
+│       │   └── utils.lua         -- LoadModel, LoadAnimDict
+│       ├── ui/
+│       │   └── menu.lua          -- Menu API avec stack (Open/Push/Back)
+│       ├── skin/
+│       │   ├── skin.lua          -- API skin natives (composants, overlays)
+│       │   ├── data.lua          -- Donnees skin (heritage, features, yeux)
+│       │   └── editor.lua        -- Editeur interactif (grille 2D, live update)
+│       ├── notifications/
+│       │   └── notifications.lua -- Notifications natives RDR3
+│       └── inventory/
+│           └── inventory.lua     -- Inventaire
 ├── server/
-│   ├── callbacks.lua         -- Callback system
-│   ├── commands.lua          -- Commandes
-│   ├── api.lua               -- Exports server
-│   ├── main.lua              -- Entry point & connexion
+│   ├── callbacks.lua
+│   ├── commands.lua
+│   ├── api.lua
+│   ├── main.lua
 │   ├── classes/
-│   │   ├── player.lua        -- Player ESX-style + State Bags
-│   │   └── character.lua     -- Character data
+│   │   ├── player.lua            -- Player ESX-style + State Bags
+│   │   └── character.lua         -- Character data
 │   └── modules/
-│       ├── economy.lua       -- Taxes par comte
-│       ├── inventory.lua     -- Inventaire
-│       ├── admin.lua         -- Admin
-│       ├── jobs.lua          -- Jobs
-│       └── saves.lua         -- Auto-save
-├── ui/                       -- NUI (React)
-└── docs/                     -- Documentation
+│       ├── core/
+│       │   ├── database.lua      -- Auto-creation tables
+│       │   ├── cron.lua          -- Cron scheduler
+│       │   └── saves.lua         -- Auto-save
+│       ├── economy/economy.lua   -- Taxes par comte
+│       └── player/admin.lua      -- Admin
+├── web/                          -- NUI (React + Vite)
+│   └── src/interfaces/menu/     -- Menu React avec grille 2D
+└── docs/
 ```
 
 ## Pages
 
 - [API Server](./server.md) - Player, economy, callbacks
 - [API Client](./client.md) - State Bags, KVP, notifications
+- [Menu](./menu.md) - Menu API avec stack, grille 2D, callbacks live
+- [Skin](./skin.md) - Skin API, editeur, overlays, expressions
+- [Camera](./camera.md) - Camera API
+- [Prompts](./prompts.md) - Prompts natifs RDR3
+- [Character](./character.md) - Flow de creation de personnage
 - [Economie & Taxes](./economy.md) - Systeme de comtes
 - [Base de donnees](./database.md) - Schema SQL
 - [Evenements](./events.md) - Liste des events

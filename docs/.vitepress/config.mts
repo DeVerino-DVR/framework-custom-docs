@@ -11,6 +11,7 @@ export default defineConfig({
       { text: 'Server', link: '/server' },
       { text: 'Client', link: '/client' },
       { text: 'Menu', link: '/menu' },
+      { text: 'Skin', link: '/skin' },
     ],
 
     sidebar: [
@@ -34,6 +35,15 @@ export default defineConfig({
         items: [
           { text: 'Callbacks, State, KVP', link: '/client' },
           { text: 'Menu', link: '/menu' },
+          { text: 'Camera', link: '/camera' },
+          { text: 'Prompts', link: '/prompts' },
+        ]
+      },
+      {
+        text: 'Personnage',
+        items: [
+          { text: 'Creation de personnage', link: '/character' },
+          { text: 'Skin & Editeur', link: '/skin' },
         ]
       },
     ],
